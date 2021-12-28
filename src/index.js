@@ -1,7 +1,7 @@
 import './sass/main.scss';
 import Notiflix from 'notiflix';
 import axios from 'axios';
-import API from './JS/API';
+import API from './js/api';
 
 
 const searchBlock = document.querySelector('.search-block');
@@ -17,28 +17,9 @@ let page = 0;
 buttonLoad.style.display = 'none';
 buttonUp.style.display = 'none';
 
-// async function fetchImages(inputValue, page) {
-//   const searchParams = new URLSearchParams({
-//     key:'24937750-2ed08653801c0d28e5986ff83',
-//     q:inputValue,
-//     image_type:'photo',
-//     orientation:'horizontal',
-//     safesearch:true,
-//     page:page,
-//     per_page: perPage
-//   });
-//   try {
-//     const response = await axios.get(
-//       `https://pixabay.com/api/?${searchParams}`,
-//     );
-//     return response.data;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
 
-const clearGallery = elems => {
-  [...elems.children].forEach(elem => elem.remove())
+const clearGallery = () => {
+  gallery.innerHTML=''
 }
 async function loadGallery(event) {
   event.preventDefault();
@@ -46,9 +27,10 @@ async function loadGallery(event) {
   buttonLoad.style.display = 'none';
   page = 1;
   inputValue = searchInput.value;
-  if(inputValue!==''){
-      submitForm()
+  if(inputValue.trim()==null || inputValue.trim()==""|| inputValue===" " ){
+    return Notiflix.Notify.info("Sorry, you need write a correct string.");
     }
+  submitForm()
 }
 searchForm.addEventListener('submit', loadGallery);
 
