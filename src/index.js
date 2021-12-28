@@ -1,6 +1,7 @@
 import './sass/main.scss';
 import Notiflix from 'notiflix';
 import axios from 'axios';
+import API from './JS/API';
 
 
 const searchBlock = document.querySelector('.search-block');
@@ -9,32 +10,32 @@ const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
 const buttonLoad = document.querySelector('.load-more');
 const buttonUp = document.querySelector('.button-up');
+
+let inputValue = searchInput.value;
 let perPage = 40;
 let page = 0;
-let inputValue = searchInput.value;
-
 buttonLoad.style.display = 'none';
 buttonUp.style.display = 'none';
 
-async function fetchImages(inputValue, page) {
-  const searchParams = new URLSearchParams({
-    key:'24937750-2ed08653801c0d28e5986ff83',
-    q:inputValue,
-    image_type:'photo',
-    orientation:'horizontal',
-    safesearch:true,
-    page:page,
-    per_page: perPage
-  });
-  try {
-    const response = await axios.get(
-      `https://pixabay.com/api/?${searchParams}`,
-    );
-    return response.data;
-  } catch (error) {
-    console.log(error);
-  }
-}
+// async function fetchImages(inputValue, page) {
+//   const searchParams = new URLSearchParams({
+//     key:'24937750-2ed08653801c0d28e5986ff83',
+//     q:inputValue,
+//     image_type:'photo',
+//     orientation:'horizontal',
+//     safesearch:true,
+//     page:page,
+//     per_page: perPage
+//   });
+//   try {
+//     const response = await axios.get(
+//       `https://pixabay.com/api/?${searchParams}`,
+//     );
+//     return response.data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 const clearGallery = elems => {
   [...elems.children].forEach(elem => elem.remove())
@@ -45,7 +46,14 @@ async function loadGallery(event) {
   buttonLoad.style.display = 'none';
   page = 1;
   inputValue = searchInput.value;
-  fetchImages(inputValue, page)
+  if(inputValue!==''){
+      submitForm()
+    }
+}
+searchForm.addEventListener('submit', loadGallery);
+
+function submitForm(){
+  API.fetchImages(inputValue, page,perPage)
     .then(inputValue => {
       let allPages = Math.ceil(inputValue.totalHits / perPage);
       if (inputValue.hits.length > 0) {
@@ -109,7 +117,7 @@ function createGallery(inputValue) {
 buttonLoad.addEventListener('click', () => {
     inputValue = searchInput.value;
     page += 1;
-    fetchImages(inputValue, page).then(inputValue => {
+    API.fetchImages(inputValue, page,perPage).then(inputValue => {
       let allPages = Math.ceil(inputValue.totalHits / perPage);
       createGallery(inputValue);
 
